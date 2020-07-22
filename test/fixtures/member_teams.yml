@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  member: one
+  team: one
+  team_role: one
+  entry_date: 2020-07-22
+  leaving_date: 2020-07-22
+
+two:
+  member: two
+  team: two
+  team_role: two
+  entry_date: 2020-07-22
+  leaving_date: 2020-07-22
