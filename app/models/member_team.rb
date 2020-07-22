@@ -1,5 +1,5 @@
 class MemberTeam < ApplicationRecord
-  belongs_to :member
-  belongs_to :team
-  belongs_to :team_role
+    belongs_to :member
+    belongs_to :team 
+    has_one :role
 end
