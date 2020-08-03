@@ -15,17 +15,15 @@ ActiveRecord::Schema.define(version: 2020_07_22_172539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "member_teams", force: :cascade do |t|
+  create_table "member_roles", force: :cascade do |t|
     t.bigint "member_id"
-    t.bigint "team_id"
-    t.bigint "team_role_id"
+    t.bigint "role_id"
     t.date "entry_date"
     t.date "leaving_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["member_id"], name: "index_member_teams_on_member_id"
-    t.index ["team_id"], name: "index_member_teams_on_team_id"
-    t.index ["team_role_id"], name: "index_member_teams_on_team_role_id"
+    t.index ["member_id"], name: "index_member_roles_on_member_id"
+    t.index ["role_id"], name: "index_member_roles_on_role_id"
   end
 
   create_table "members", force: :cascade do |t|
@@ -37,18 +35,11 @@ ActiveRecord::Schema.define(version: 2020_07_22_172539) do
   end
 
   create_table "roles", force: :cascade do |t|
+    t.bigint "team_id"
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "team_roles", force: :cascade do |t|
-    t.bigint "role_id"
-    t.bigint "team_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["role_id"], name: "index_team_roles_on_role_id"
-    t.index ["team_id"], name: "index_team_roles_on_team_id"
+    t.index ["team_id"], name: "index_roles_on_team_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -58,9 +49,7 @@ ActiveRecord::Schema.define(version: 2020_07_22_172539) do
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "member_teams", "members"
-  add_foreign_key "member_teams", "team_roles"
-  add_foreign_key "member_teams", "teams"
-  add_foreign_key "team_roles", "roles"
-  add_foreign_key "team_roles", "teams"
+  add_foreign_key "member_roles", "members"
+  add_foreign_key "member_roles", "roles"
+  add_foreign_key "roles", "teams"
 end

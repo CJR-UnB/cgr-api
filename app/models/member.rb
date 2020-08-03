@@ -1,10 +1,11 @@
 class Member < ApplicationRecord
-    has_many :teams, through: :member_teams
-    has_many :roles, through: :member_teams
+    has_many :member_roles, inverse_of: :member
+    has_many :roles, through: :member_roles
+    has_many :teams, through: :roles
 
     validates :name, uniqueness: true;
 
-    def role_in(team)
-        MemberTeam.where({member_id: self.id, team_id: team.id}).role
-    end 
+    def join_team(role_id)
+        MemberRole.find_or_create_by!({member_id: self.id, role_id: role_id})
+    end
 end

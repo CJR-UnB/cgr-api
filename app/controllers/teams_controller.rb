@@ -5,12 +5,12 @@ class TeamsController < ApplicationController
   def index
     @teams = Team.all
 
-    render json: @teams
+    render json: @teams, include: [:roles]
   end
 
   # GET /teams/1
   def show
-    render json: @team
+    render json: @team, include: [:roles]
   end
 
   # POST /teams
