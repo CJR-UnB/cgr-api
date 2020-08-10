@@ -20,8 +20,6 @@ jobs:
     services:
       postgres:
         image: postgres:11.6-alpine
-        env:
-          POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
@@ -38,8 +36,10 @@ jobs:
     - name: Install dependencies
       run: bundle install
     - name: Run tests
-      env: # Or as an environment variable
-        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      env:
+        PGHOST: 127.0.0.1
+        PGUSER: postgres
+        RAILS_ENV: test
       run: |
         bundle exec rails db:setup
         bundle exec spec
