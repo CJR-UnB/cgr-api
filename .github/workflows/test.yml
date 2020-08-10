@@ -42,4 +42,4 @@ jobs:
         RAILS_ENV: test
       run: |
         bundle exec rails db:setup
-        bundle exec spec
+        bundle exec rspec
