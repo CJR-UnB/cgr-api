@@ -32,10 +32,12 @@ RSpec.describe "TeamsController", :type => :request do
     it "updates a Team" do
         headers = { "ACCEPT" => "application/json" }
         put "/teams/#{nut.id}", :params => { :team => {:name => "Fã clube da Larissa"} }, :headers => headers
+        body = JSON.parse(response.body)
 
         expect(response.content_type).to eq("application/json")
-        expect(controller.params[:team][:name]).to eq("Fã clube da Larissa")
         expect(response).to have_http_status(:ok)
+        expect(body['name']).to eq("Fã clube da Larissa")
+        
     end
 
     it "deletes a team" do 
