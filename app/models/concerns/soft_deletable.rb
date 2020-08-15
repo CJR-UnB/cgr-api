@@ -3,7 +3,8 @@ module SoftDeletable
   
     included do
       default_scope { where(deleted_at: nil) }
-      scope :only_deleted, -> { unscope(where: :deleted_at).where.not(deleted_at: nil) }
+      scope :only_deleted, ->   { unscope(where: :deleted_at).where.not(deleted_at: nil) }
+      scope :include_deleted, -> { unscope(where: :deleted_at)}
     end
   
     def delete
