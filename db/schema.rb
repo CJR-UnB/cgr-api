@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_22_172539) do
+ActiveRecord::Schema.define(version: 2020_08_15_172837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,8 +18,8 @@ ActiveRecord::Schema.define(version: 2020_07_22_172539) do
   create_table "member_roles", force: :cascade do |t|
     t.bigint "member_id"
     t.bigint "role_id"
-    t.date "entry_date"
-    t.date "leaving_date"
+    t.datetime "entry_date"
+    t.datetime "leaving_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["member_id"], name: "index_member_roles_on_member_id"
@@ -28,8 +28,6 @@ ActiveRecord::Schema.define(version: 2020_07_22_172539) do
 
   create_table "members", force: :cascade do |t|
     t.string "name"
-    t.date "entry_date"
-    t.date "leaving_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -39,6 +37,7 @@ ActiveRecord::Schema.define(version: 2020_07_22_172539) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
     t.index ["team_id"], name: "index_roles_on_team_id"
   end
 
@@ -47,6 +46,7 @@ ActiveRecord::Schema.define(version: 2020_07_22_172539) do
     t.string "initials"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   add_foreign_key "member_roles", "members"

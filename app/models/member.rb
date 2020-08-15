@@ -4,7 +4,6 @@ class Member < ApplicationRecord
     has_many :teams, through: :roles
 
     validates :name, uniqueness: true;
-    validates :entry_date, presence: true;
 
     def join_team(role_id)
         MemberRole.find_or_create_by!({member_id: self.id, role_id: role_id})
