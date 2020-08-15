@@ -2,20 +2,17 @@ require "rails_helper"
 
 RSpec.describe "MembersController", :type => :request do
 
-    let!(:larissa) { Member.create!({:name => "Larissa Santana de Freitas Andrade", 
-                                     :entry_date => "2019-02-01"})}
+    let!(:larissa) { Member.create!({:name => "Larissa Santana de Freitas Andrade"})}
 
     it "creates a Member" do
         headers = { "ACCEPT" => "application/json" }
-        member = { :name => "Valentin Ferreira Paes", 
-                   :entry_date => "2019-02-01" }
+        member = { :name => "Valentin Ferreira Paes" }
         post "/members", :params => { :member => member }, :headers => headers
         body = JSON.parse(response.body)
         
         expect(response.content_type).to eq("application/json")
         expect(response).to have_http_status(:created)
         expect(body['name']).to eq(member[:name])
-        expect(body['entry_date']).to eq(member[:entry_date])
     end
 
     it "shows all Members information" do 
@@ -32,22 +29,25 @@ RSpec.describe "MembersController", :type => :request do
         expect(response.content_type).to eq("application/json")
         expect(response).to have_http_status(:ok)
         expect(body['name']).to eq(larissa.name)
-        expect(body['entry_date']).to eq(larissa.entry_date.to_s(:db))
     end 
 
-    it "updates a Member" do
+    it "updates a Member info" do
         headers = { "ACCEPT" => "application/json" }
-        put "/members/#{larissa.id}", :params => { :member => {:leaving_date => "2020-07-20"} }, :headers => headers
+        put "/members/#{larissa.id}", :params => { :member => {:name => "Larissinha lindinha"} }, :headers => headers
         body = JSON.parse(response.body)
         
         expect(response.content_type).to eq("application/json")
         expect(response).to have_http_status(:ok)
-        expect(body['leaving_date']).to eq("2020-07-20")
+        expect(body['name']).to eq("Larissinha lindinha")
     end
 
-    it "deletes a Member" do 
-        delete "/members/#{larissa.id}"
+    it "deletes a Member" do
+        headers = { "ACCEPT" => "application/json" }
+        delete "/members/#{larissa.id}", :headers => headers
+        body = JSON.parse(response.body)
 
-        expect(response).to have_http_status(:no_content)
+        expect(response.content_type).to eq("application/json")
+        expect(response).to have_http_status(:ok)
+        expect(body['deleted_at']).to_not eq(nil)
     end 
 end
