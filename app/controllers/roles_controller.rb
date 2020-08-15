@@ -35,7 +35,11 @@ class RolesController < ApplicationController
 
   # DELETE /roles/1
   def destroy
-    @role.destroy
+    if @role.destroy
+      render json: @role
+    else
+      render json: @role.errors, status: :unprocessable_entity
+    end
   end
 
   private

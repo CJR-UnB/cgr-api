@@ -5,6 +5,8 @@ class Member < ApplicationRecord
 
     validates :name, uniqueness: true;
 
+    include SoftDeletable
+
     def join_team(role_id)
         MemberRole.find_or_create_by!({member_id: self.id, role_id: role_id})
     end

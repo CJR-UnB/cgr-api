@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 2020_08_15_172837) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "roles", force: :cascade do |t|

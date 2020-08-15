@@ -43,7 +43,11 @@ class MembersController < ApplicationController
 
   # DELETE /members/1
   def destroy
-    @member.destroy
+    if @member.destroy
+      render json: @member
+    else
+      render json: @member.errors, status: :unprocessable_entity
+    end
   end
 
   private
