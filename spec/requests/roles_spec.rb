@@ -11,14 +11,14 @@ RSpec.describe "RoleController", :type => :request do
         headers = { "ACCEPT" => "application/json" }
         role = { :name => "Assessor", 
                  :team_id => nut.id }
-        post "/roles", :params => { :role => role }, :headers => headers
+        post "/teams/#{nut.id}/roles", :params => { :role => role }, :headers => headers
 
         expect(response.content_type).to eq("application/json")
         expect(response).to have_http_status(:created)
     end
 
     it "shows all Roles information" do 
-        get "/roles"
+        get "/teams/#{nut.id}/roles"
 
         expect(response.content_type).to eq("application/json")
         expect(response).to have_http_status(:ok)
@@ -44,8 +44,12 @@ RSpec.describe "RoleController", :type => :request do
     end
 
     it "deletes a role" do 
-        delete "/roles/#{consultor.id}"
+        headers = { "ACCEPT" => "application/json" }
+        delete "/roles/#{consultor.id}", :headers => headers
+        body = JSON.parse(response.body)
 
-        expect(response).to have_http_status(:no_content)
+        expect(response.content_type).to eq("application/json")
+        expect(response).to have_http_status(:ok)
+        expect(body['deleted_at']).to_not eq(nil)
     end 
 end

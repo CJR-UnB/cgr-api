@@ -35,7 +35,11 @@ class TeamsController < ApplicationController
 
   # DELETE /teams/1
   def destroy
-    @team.destroy
+    if @team.destroy
+      render json: @team
+    else
+      render json: @team.errors, status: :unprocessable_entity
+    end
   end
 
   private

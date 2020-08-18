@@ -41,8 +41,12 @@ RSpec.describe "TeamsController", :type => :request do
     end
 
     it "deletes a team" do 
-        delete "/teams/#{nut.id}"
+        headers = { "ACCEPT" => "application/json" }
+        delete "/teams/#{nut.id}", :headers => headers
+        body = JSON.parse(response.body)
 
-        expect(response).to have_http_status(:no_content)
+        expect(response.content_type).to eq("application/json")
+        expect(response).to have_http_status(:ok)
+        expect(body['deleted_at']).to_not eq(nil)
     end 
 end
