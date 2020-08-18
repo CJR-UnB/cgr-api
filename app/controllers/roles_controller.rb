@@ -1,9 +1,10 @@
 class RolesController < ApplicationController
   before_action :set_role, only: [:show, :update, :destroy]
+  before_action :set_team, only: [:index]
 
   # GET /roles
   def index
-    @roles = Role.all
+    @roles = @team.roles
 
     render json: @roles
   end
@@ -46,6 +47,10 @@ class RolesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_role
       @role = Role.find(params[:id])
+    end
+
+    def set_team 
+      @team = Team.find(params[:team_id])
     end
 
     # Only allow a trusted parameter "white list" through.

@@ -1,6 +1,6 @@
 class Team < ApplicationRecord
     has_many :members, through: :roles
-    has_many :roles
+    has_many :roles, dependent: :destroy
 
     include SoftDeletable
     

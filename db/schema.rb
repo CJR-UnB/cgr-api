@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 2020_08_15_172837) do
     t.bigint "member_id"
     t.bigint "role_id"
     t.datetime "entry_date"
-    t.datetime "leaving_date"
+    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["member_id"], name: "index_member_roles_on_member_id"

@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   
-  resources :teams do 
+  resources :teams, shallow: true do 
     resources :roles 
   end
   resources :members, path: "/members/(:scope)", defaults: { scope: 1}

@@ -4,5 +4,5 @@ class MemberRole < ApplicationRecord
 
     include SoftDeletable
 
-    alias_attribute :deleted_at, :leaving_date
+    alias_attribute :leaving_date, :deleted_at
 end

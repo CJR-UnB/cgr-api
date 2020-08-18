@@ -1,5 +1,6 @@
 class MembersController < ApplicationController
   before_action :set_member, only: [:show, :update, :destroy]
+  before_action :check_roles, only: [:update]
   
   # GET /members/:scope
   def index
@@ -17,7 +18,7 @@ class MembersController < ApplicationController
     @member = Member.new(member_params)
 
     if params[:role_id]
-      @member.join_team(params[:role_id])
+      @member.join_role(params[:role_id])
     end
 
     if @member.save
@@ -29,13 +30,7 @@ class MembersController < ApplicationController
 
   # PATCH/PUT /members/:scope/:id
   def update
-    if params[:role_id]
-      if params[:leave_role]
-        @member.leave_role(params[:role_id])
-      end
-      @member.join_role(params[:role_id])
-    end
-
+    set_member
     if @member.update(member_params)
       render json: @member, include: [:teams, :roles]
     else
@@ -59,9 +54,18 @@ class MembersController < ApplicationController
     @member = Member.check_scope(params[:scope]).find(params[:id])
   end
 
+  def check_roles 
+    if params[:role_id]
+      if params[:leave_role]
+        @member.leave_role(Integer(params[:role_id]))
+      else 
+        @member.join_role(params[:role_id])
+      end
+    end
+  end
   # Only allow a trusted parameter "white list" through.
   def member_params
-    params.require(:member).permit(:name, :role_id, :leave_role, :deleted_at, :scope)
+    params.require(:member).permit(:name, :deleted_at)
   end
 
 end
