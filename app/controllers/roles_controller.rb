@@ -2,19 +2,19 @@ class RolesController < ApplicationController
   before_action :set_role, only: [:show, :update, :destroy]
   before_action :set_team, only: [:index]
 
-  # GET /roles
+  # GET /teams/:team_id/roles
   def index
     @roles = @team.roles
 
     render json: @roles
   end
 
-  # GET /roles/1
+  # GET /roles/:id
   def show
     render json: @role
   end
 
-  # POST /roles
+  # POST /teams/:team_id/roles
   def create
     @role = Role.new(role_params)
 
@@ -25,7 +25,7 @@ class RolesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /roles/1
+  # PATCH/PUT /roles/:id
   def update
     if @role.update(role_params)
       render json: @role
@@ -34,7 +34,7 @@ class RolesController < ApplicationController
     end
   end
 
-  # DELETE /roles/1
+  # DELETE /roles/:id
   def destroy
     if @role.destroy
       render json: @role
