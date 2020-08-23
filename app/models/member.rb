@@ -12,10 +12,10 @@ class Member < ApplicationRecord
     end
 
     def leave_role(role_id)
-        role = MemberRole.where({member_id: self.id, role_id: role_id})
-        role = role.first
-        if role 
-            role.delete
+        relation = MemberRole.where({member_id: self.id, role_id: role_id})
+        relation = relation.first
+        if relation 
+            relation.delete
         end 
     end
 
