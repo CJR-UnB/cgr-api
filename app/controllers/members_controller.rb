@@ -22,7 +22,7 @@ class MembersController < ApplicationController
     end
 
     if @member.save
-      render json: @member, status: :created, location: @member
+      render json: @member, include: [:teams, :roles], status: :created, location: @member
     else
       render json: @member.errors, status: :unprocessable_entity
     end
@@ -57,7 +57,7 @@ class MembersController < ApplicationController
   def check_roles 
     if params[:role_id]
       if params[:leave_role]
-        @member.leave_role(Integer(params[:role_id]))
+        @member.leave_role(params[:role_id])
       else 
         @member.join_role(params[:role_id])
       end
