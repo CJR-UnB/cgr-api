@@ -1,11 +1,10 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
+# Standard role and team for members registrated without any role 
 #
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+visitantes = Team.find_or_create_by!({ name: 'Visitantes'})
+Role.find_or_create_by!({ name: 'Visitante', team: visitantes})
 
+# Samples
+#
 equipe = Team.find_or_create_by!({ name: 'Equipe CJR'})
 membro = Role.find_or_create_by!({ name: 'Membro', team: equipe})
 
