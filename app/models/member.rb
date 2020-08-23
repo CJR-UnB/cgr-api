@@ -12,17 +12,11 @@ class Member < ApplicationRecord
     end
 
     def leave_role(role_id)
-        role = MemberRole.where({member_id: self.id, role_id: role_id})
-        role = role.first
-        if role 
-            role.delete
+        relation = MemberRole.where({member_id: self.id, role_id: role_id})
+        relation = relation.first
+        if relation 
+            relation.delete
         end 
-    end
-
-    def self.check_scope(scope = "1")
-        return Member.includes(:teams, :roles) if scope == "1"
-        return Member.only_deleted.includes(:teams, :roles) if scope == "2"
-        return Member.include_deleted.includes(:teams, :roles) if scope == "3"
     end
 
 end

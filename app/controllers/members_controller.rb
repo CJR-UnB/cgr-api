@@ -2,18 +2,18 @@ class MembersController < ApplicationController
   before_action :set_member, only: [:show, :update, :destroy]
   before_action :check_roles, only: [:update]
   
-  # GET /members/:scope
+  # GET /members
   def index
-    @members = Member.check_scope(params[:scope]) 
+    @members = Member.includes(:teams, :roles)
     render json: @members, include: [:teams, :roles]
   end
 
-  # GET /members/:scope/:id
+  # GET /members/:id
   def show
     render json: @member, include: [:teams, :roles]
   end
 
-  # POST /members/:scope
+  # POST /members
   def create
     @member = Member.new(member_params)
 
@@ -22,13 +22,13 @@ class MembersController < ApplicationController
     end
 
     if @member.save
-      render json: @member, status: :created, location: @member
+      render json: @member, include: [:teams, :roles], status: :created, location: @member
     else
       render json: @member.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /members/:scope/:id
+  # PATCH/PUT /members/:id
   def update
     set_member
     if @member.update(member_params)
@@ -38,31 +38,28 @@ class MembersController < ApplicationController
     end
   end
 
-  # DELETE /members/:scope/:id
+  # DELETE /members/:id
   def destroy
-    if @member.destroy
-      render json: @member, include: [:teams, :roles]
-    else
-      render json: @member.errors, status: :unprocessable_entity
-    end
+    @member.destroy
   end
 
   private
   
   # Use callbacks to share common setup or constraints between actions.
   def set_member
-    @member = Member.check_scope(params[:scope]).find(params[:id])
+    @member = Member.find(params[:id])
   end
 
   def check_roles 
     if params[:role_id]
       if params[:leave_role]
-        @member.leave_role(Integer(params[:role_id]))
+        @member.leave_role(params[:role_id])
       else 
         @member.join_role(params[:role_id])
       end
     end
   end
+  
   # Only allow a trusted parameter "white list" through.
   def member_params
     params.require(:member).permit(:name, :deleted_at)
