@@ -19,10 +19,4 @@ class Member < ApplicationRecord
         end 
     end
 
-    def self.check_scope(scope = "1")
-        return Member.includes(:teams, :roles) if scope == "1"
-        return Member.only_deleted.includes(:teams, :roles) if scope == "2"
-        return Member.include_deleted.includes(:teams, :roles) if scope == "3"
-    end
-
 end
