@@ -1,5 +1,5 @@
 class Member < ApplicationRecord
-    has_many :member_roles, inverse_of: :member
+    has_many :member_roles, inverse_of: :member, dependent: :destroy;
     has_many :roles, through: :member_roles
     has_many :teams, through: :roles
 

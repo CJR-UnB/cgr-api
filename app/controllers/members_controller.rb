@@ -17,7 +17,7 @@ class MembersController < ApplicationController
 
   # POST /members
   def create
-    result = MemberManager::Register.call(member_params, optional_params)
+    result = MemberManager::Register.call(member_params, opt_params)
 
     if result.success?
       render json: result.member, include: [:teams, :roles], status: :created, location: result.member
@@ -36,9 +36,9 @@ class MembersController < ApplicationController
     end
   end
 
-  # DELETE /members/:id
+  # DELETE /members/:id/:hard_delete
   def destroy
-    @member.destroy
+    opt_params[:hard_delete]? @member.soft_delete : @member.destroy
   end
 
   private
@@ -63,8 +63,8 @@ class MembersController < ApplicationController
     params.require(:member).permit(:name, :deleted_at)
   end
 
-  def optional_params
-    params.permit(:role_id, :leave_role)
+  def opt_params
+    params.permit(:role_id, :leave_role, :hard_delete)
   end
 
 end

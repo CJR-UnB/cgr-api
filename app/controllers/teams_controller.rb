@@ -35,7 +35,7 @@ class TeamsController < ApplicationController
 
   # DELETE /teams/1
   def destroy
-    if @team.destroy
+    if @team.soft_delete
       render json: @team
     else
       render json: @team.errors, status: :unprocessable_entity

@@ -2,22 +2,17 @@ module SoftDeletable
     extend ActiveSupport::Concern
   
     included do
+      scope :only_deleted, -> { unscope(where: :deleted_at).where.not(deleted_at: nil) }
+      scope :with_deleted, -> { unscope(where: :deleted_at)}
+
       default_scope { where(deleted_at: nil) }
-      scope :only_deleted, ->   { unscope(where: :deleted_at).where.not(deleted_at: nil) }
-      scope :include_deleted, -> { unscope(where: :deleted_at)}
+
+      alias_method :hard_destroy, :destroy
+      alias_method :hard_delete,  :delete
     end
   
-    def delete
+    def soft_delete
       update_column :deleted_at, DateTime.now if has_attribute? :deleted_at
-    end
-  
-    def destroy;
-      callbacks_result = transaction do
-        run_callbacks(:destroy) do
-          delete
-        end
-      end
-      callbacks_result ? self : false
     end
   
     def self.included(klazz)
