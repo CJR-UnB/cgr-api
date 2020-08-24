@@ -2,6 +2,8 @@ class MembersController < ApplicationController
   before_action :set_member, only: [:show, :update, :destroy]
   before_action :check_roles, only: [:update]
   
+  include MemberManager
+
   # GET /members
   def index
     @members = Member.includes(:teams, :roles)
@@ -15,16 +17,12 @@ class MembersController < ApplicationController
 
   # POST /members
   def create
-    @member = Member.new(member_params)
+    result = MemberManager::Register.call(member_params, optional_params)
 
-    if params[:role_id]
-      @member.join_role(params[:role_id])
-    end
-
-    if @member.save
-      render json: @member, include: [:teams, :roles], status: :created, location: @member
+    if result.success?
+      render json: result.member, include: [:teams, :roles], status: :created, location: result.member
     else
-      render json: @member.errors, status: :unprocessable_entity
+      render json: result.errors, status: :unprocessable_entity
     end
   end
 
@@ -63,6 +61,10 @@ class MembersController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def member_params
     params.require(:member).permit(:name, :deleted_at)
+  end
+
+  def optional_params
+    params.permit(:role_id, :leave_role)
   end
 
 end

@@ -1,7 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "MembersController", :type => :request do
-
+    
+    let!(:visitantes) { Team.find_or_create_by!({ name: 'Visitantes'}) }
+    let!(:visitante) { Role.find_or_create_by!({ name: 'Visitante', team: visitantes}) }
+    
     let!(:bope) { Team.create!({:name => "Núcleo de Atendimento e Vendas", :initials => "NAV"}) }
     let!(:lider) { Role.create!({:name => "Líder de Atendimento e Vendas", :team => bope})}
     let!(:larissa) { Member.create!({:name => "Larissa Santana de Freitas Andrade", :roles=>[lider]})}
