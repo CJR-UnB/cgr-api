@@ -7,12 +7,11 @@ class UsersController < ApplicationController
     # GET /users
     def index
         @users = User.all
-        render json: @users, include: [member: [:teams, :roles]]
     end 
 
     # GET /users/:id
     def show 
-        render json: @user, include: [member: [:teams, :roles]]
+        render json: @user, include: [:member]
     end 
 
     # POST /users
@@ -20,7 +19,7 @@ class UsersController < ApplicationController
         result = UserManager::Registrate.call(user_params, member_params)
 
         if result.success?
-          render json: result.user, include: [member: [:teams, :roles]], status: :created, location: result.user
+          render json: result.user, include: [:member], status: :created, location: result.user
         else
           render json: result.errors, status: :unprocessable_entity
         end
@@ -31,7 +30,7 @@ class UsersController < ApplicationController
         result = UserManager::Update.call(@current_user, @user, user_params, member_params)
 
         if result.sucess?
-          render json: result.user, include: [member: [:teams, :roles]]
+          render json: result.user, include: [:member]
         else
           render json: result.errors, status: result.status
         end
@@ -53,12 +52,15 @@ class UsersController < ApplicationController
     end 
 
     def user_params 
-        params.require(:user).permit(:name, :password, :password_confirmation)
+        params.require(:user).permit(:name, :email, :password, :password_confirmation)
     end
 
     def member_params
-        { member:  params.require(:member).permit(:name, :deleted_at),
-          options:  params.permit(:role_id, :leave_role, :hard_delete)}
+        member_params = { 
+                member:  params.fetch(:member, {}).permit(:name, :deleted_at),
+                options:  params.permit(:role_id, :leave_role, :hard_delete)
+            }
+        member_params ? member_params : nil
          
     end
     

@@ -3,29 +3,31 @@ module MemberManager
         
         attr_reader :current_user, :member, :member_params
 
-        def initiliaze(current_user, member, member_params = {}, opt_params = {})
+        def initialize(current_user, member, member_params = {}, opt_params = {})
+            
             @current_user = current_user
             @member = member
             @member_params = member_params
 
             check_roles(opt_params)
-            @member = Member.find_by(@member.id)
+            @member = Member.find_by(id: @member.id)
         end 
 
         def execute
+            
             if can_update?
                 return OpenStruct.new(success?: false, 
                     member: nil, 
-                    errors: @member.errors) unless @member.update(@member_params
-                    status: :unprocessable_entity)
+                    errors: @member.errors, 
+                    status: :unprocessable_entity) unless @member.update(@member_params)
                 OpenStruct.new(success?: true, 
                     member: @member, 
-                    errors: nil
+                    errors: nil,
                     status: :ok)
             else
                 OpenStruct.new(success?: false,
                     member: nil,
-                    errors: {error: "Not Authorized: User must be admin OR the same as target"}
+                    errors: {error: "Not Authorized: User must be admin OR the same as target"},
                     status: :unauthorized)
             end
         end 

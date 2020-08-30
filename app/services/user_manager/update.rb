@@ -1,8 +1,8 @@
 module UserManager
     class Update < ApplicationService
-        attr_reader :current_user :user, :user_params
+        attr_reader :current_user, :user, :user_params, :member_params
 
-        def initiliaze(current_user, user, user_params = {}, member_params = {})
+        def initialize(current_user, user, user_params = {}, member_params = {})
             @current_user = current_user
             @user = user
             @user_params = user_params
@@ -13,17 +13,17 @@ module UserManager
             if can_update?
                 return OpenStruct.new(success?: false, 
                     user: nil, 
-                    errors: @user.errors) unless @user.update(@user_params
-                    status: :unprocessable_entity)
+                    errors: @user.errors, 
+                    status: :unprocessable_entity) unless @user.update(@user_params)
                 update_or_create_member(@member_params)
                 OpenStruct.new(success?: true, 
                     user: @user, 
-                    errors: nil
+                    errors: nil,
                     status: :ok)
             else
                 OpenStruct.new(success?: false,
                     user: nil,
-                    errors: {error: "Not Authorized: User must be admin OR the same as target"}
+                    errors: {error: "Not Authorized: User must be admin OR the same as target"},
                     status: :unauthorized)
             end
         end 

@@ -6,8 +6,8 @@ module UserManager
         def initialize(user_params = {}, member_params = {})
             @user = User.new(user_params)
             
-            if member_params
-                member = MemberManager::Registrate.call(@member_params)
+            unless member_params.empty?
+                member = MemberManager::Registrate.call(member_params[:member], member_params[:options]).member
                 @user.member = member 
             end
         end 
