@@ -4,8 +4,8 @@ class Member < ApplicationRecord
     has_many :teams, through: :roles
     belongs_to :user, optional: true
 
-    validates :name, uniqueness: true
-
+    validates :name, presence: true, uniqueness: { case_sensitive: false }
+    
     include SoftDeletable
 
     def join_role(role_id)
