@@ -7,4 +7,6 @@ Rails.application.routes.draw do
   delete '/members/:id/:hard_delete', 
       to: 'members#destroy',
       defaults: {hard_delete: nil}
+    
+  post 'authenticate', to: 'authentication#authenticate'
  end
