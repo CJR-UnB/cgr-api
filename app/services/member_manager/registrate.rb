@@ -1,5 +1,5 @@
 module MemberManager
-    class Register < ApplicationService
+    class Registrate < ApplicationService
 
         attr_reader :member, :options
 
