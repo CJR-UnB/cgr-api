@@ -1,9 +1,10 @@
 class Member < ApplicationRecord
-    has_many :member_roles, inverse_of: :member, dependent: :destroy;
+    has_many :member_roles, inverse_of: :member, dependent: :destroy
     has_many :roles, through: :member_roles
     has_many :teams, through: :roles
+    belongs_to :user, optional: true
 
-    validates :name, uniqueness: true;
+    validates :name, uniqueness: true
 
     include SoftDeletable
 
