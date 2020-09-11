@@ -1,10 +1,15 @@
+# Admin user
+admin = User.create!({name: 'admin', 
+        email: 'admin@admin.com', 
+        password: 'popao123',
+        password_confirmation: 'popao123',
+        admin: true})
+
 # Standard role and team for members registrated without any role 
-#
 visitantes = Team.find_or_create_by!({ name: 'Visitantes'})
 Role.find_or_create_by!({ name: 'Visitante', team: visitantes})
 
 # Samples
-#
 equipe = Team.find_or_create_by!({ name: 'Equipe CJR'})
 membro = Role.find_or_create_by!({ name: 'Membro', team: equipe})
 
