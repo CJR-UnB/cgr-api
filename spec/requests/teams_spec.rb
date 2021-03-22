@@ -11,21 +11,21 @@ RSpec.describe "TeamsController", :type => :request do
                  :initials => "NOE" }
         post "/teams", :params => { :team => team }, :headers => headers
 
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:created)
     end
 
     it "shows all Teams information" do 
         get "/teams"
 
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:ok)
     end 
 
     it "shows a Team information" do 
         get "/teams/#{nut.id}"
 
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:ok)
     end 
 
@@ -34,7 +34,7 @@ RSpec.describe "TeamsController", :type => :request do
         put "/teams/#{nut.id}", :params => { :team => {:name => "Fã clube da Larissa"} }, :headers => headers
         body = JSON.parse(response.body)
 
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:ok)
         expect(body['name']).to eq("Fã clube da Larissa")
         
@@ -45,7 +45,7 @@ RSpec.describe "TeamsController", :type => :request do
         delete "/teams/#{nut.id}", :headers => headers
         body = JSON.parse(response.body)
 
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:ok)
         expect(body['deleted_at']).to_not eq(nil)
     end 

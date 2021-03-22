@@ -15,7 +15,7 @@ RSpec.describe "MembersController", :type => :request do
         post "/members", :params => { :member => member }, :headers => headers
         body = JSON.parse(response.body)
         
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:created)
         expect(body['name']).to eq(member[:name])
     end
@@ -23,7 +23,7 @@ RSpec.describe "MembersController", :type => :request do
     it "shows all Members information" do 
         get "/members"
 
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:ok)
     end 
 
@@ -31,7 +31,7 @@ RSpec.describe "MembersController", :type => :request do
         get "/members/#{larissa.id}"
         body = JSON.parse(response.body)
 
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:ok)
         expect(body['name']).to eq(larissa.name)
     end 
@@ -41,7 +41,7 @@ RSpec.describe "MembersController", :type => :request do
     #     put "/members/#{larissa.id}", :params => { :member => {:name => "Larissinha lindinha"} }, :headers => headers
     #     body = JSON.parse(response.body)
         
-    #     expect(response.content_type).to eq("application/json")
+    #     expect(response.content_type).to match(/application\/json/)
     #     expect(response).to have_http_status(:ok)
     #     expect(body['name']).to eq("Larissinha lindinha")
     # end
@@ -52,7 +52,7 @@ RSpec.describe "MembersController", :type => :request do
     #     put "/members/#{larissa.id}", :params => { :member => {:id => larissa.id}, :role_id => new_role.id}, :headers => headers
     #     body = JSON.parse(response.body)
         
-    #     expect(response.content_type).to eq("application/json")
+    #     expect(response.content_type).to match(/application\/json/)
     #     expect(response).to have_http_status(:ok)
     #     expect(body['roles'][-1]['name']).to eq(new_role.name)
     # end
@@ -62,7 +62,7 @@ RSpec.describe "MembersController", :type => :request do
     #     put "/members/#{larissa.id}", :params => { :member => {:id => larissa.id}, :role_id => lider.id, :leave_role => true}, :headers => headers
     #     body = JSON.parse(response.body)
         
-    #     expect(response.content_type).to eq("application/json")
+    #     expect(response.content_type).to match(/application\/json/)
     #     expect(response).to have_http_status(:ok)
     #     expect(body['roles'][-1]).to eq(nil)
     # end
