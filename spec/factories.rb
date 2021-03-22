@@ -10,4 +10,9 @@ FactoryBot.define do
         password { "popao123" }
         password_confirmation { "popao123" }
     end
-  end
+
+    factory :team do 
+        name { "Núcleo de Talentos" }
+        initials { "NUT" }
+    end
+end
