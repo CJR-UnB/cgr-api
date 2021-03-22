@@ -15,4 +15,9 @@ FactoryBot.define do
         name { "Núcleo de Talentos" }
         initials { "NUT" }
     end
+
+    factory :role do 
+        name { "Consultor de Talentos"}
+        team
+    end
 end
