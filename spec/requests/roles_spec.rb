@@ -2,10 +2,8 @@ require "rails_helper"
 
 RSpec.describe "RoleController", :type => :request do
 
-    let(:nut) { Team.create!({ :name => "Núcleo de Talentos", 
-                                :initials => "NUT" })}
-    let!(:consultor) { Role.create!({ :name => "Consultor", 
-                                      :team_id => nut.id })}
+    let(:nut) { create(:team)}
+    let(:consultor) { create(:role, team: nut)}
 
     it "creates a Role" do
         headers = { "ACCEPT" => "application/json" }
