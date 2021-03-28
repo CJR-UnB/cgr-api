@@ -22,12 +22,12 @@ module MemberManager
         
         def set_defaults
             @defaults = {}
-            @defaults[:team] = Team.find_by(name: 'Visitantes')
-            @defaults[:role] = Role.find_by({name: 'Visitante', team: @defaults[:team]})
+            @defaults[:team] = Team.find_or_create_by(name: 'Visitantes')
+            @defaults[:role] = Role.find_or_create_by({name: 'Visitante', team: @defaults[:team]})
         end
 
         def check_role
-            if @options[:role_id]
+            if @options[:role_id] || @options[:role]
                 @member.join_role(@options[:role_id])
             else  
                 @member.join_role(@defaults[:role].id)
