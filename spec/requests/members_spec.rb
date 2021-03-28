@@ -2,22 +2,22 @@ require "rails_helper"
 
 RSpec.describe "MembersController", :type => :request do
     
-    let!(:visitantes) { Team.find_or_create_by!({ name: 'Visitantes'}) }
-    let!(:visitante) { Role.find_or_create_by!({ name: 'Visitante', team: visitantes}) }
+    let(:team) { create(:team)}
+    let(:role) { create(:role) }
     
-    let!(:bope) { Team.create!({:name => "Núcleo de Atendimento e Vendas", :initials => "NAV"}) }
-    let!(:lider) { Role.create!({:name => "Líder de Atendimento e Vendas", :team => bope})}
-    let!(:larissa) { Member.create!({:name => "Larissa Santana de Freitas Andrade", :roles=>[lider]})}
+    let(:team2) { create(:team, name: "Núcleo de Atendimento e Vendas", initials: "NAV")}
+    let(:role2) {create(:role, name: "Líder de Atendimento e Vendas", team: team2)}
+    let(:member) { create(:member, name: "Larissa Santana de Freitas Andrade", roles: [role2])}
 
     it "creates a Member" do
         headers = { "ACCEPT" => "application/json" }
-        member = { :name => "Valentin Ferreira Paes" }
-        post "/members", :params => { :member => member }, :headers => headers
+        new_member = { :name => "Valentin Ferreira Paes" }
+        post "/members", :params => { :member => new_member }, :headers => headers
         body = JSON.parse(response.body)
         
         expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:created)
-        expect(body['name']).to eq(member[:name])
+        expect(body['name']).to eq(new_member[:name])
     end
 
     it "shows all Members information" do 
@@ -27,13 +27,13 @@ RSpec.describe "MembersController", :type => :request do
         expect(response).to have_http_status(:ok)
     end 
 
-    it "shows a Member information" do 
-        get "/members/#{larissa.id}"
+    it "shows a Member's information" do 
+        get "/members/#{member.id}"
         body = JSON.parse(response.body)
 
         expect(response.content_type).to match(/application\/json/)
         expect(response).to have_http_status(:ok)
-        expect(body['name']).to eq(larissa.name)
+        expect(body['name']).to eq(member.name)
     end 
 
     # it "updates a Member info" do
