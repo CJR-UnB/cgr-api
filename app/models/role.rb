@@ -5,6 +5,6 @@ class Role < ApplicationRecord
 
     include SoftDeletable
     
-    validates :name, uniqueness: true
+    validates :name, presence: true
     validates :team, presence: true
 end

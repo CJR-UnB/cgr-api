@@ -30,8 +30,8 @@ class MembersController < ApplicationController
   def update
     result = MemberManager::Update.call(@current_user, @member, member_params, opt_params)
 
-    if result.sucess?
-      render json: result.member, include: [:teams, :roles]
+    if result.success?
+      render json: result.member, include: [:teams, :roles], location: result.member
     else
       render json: result.errors, status: result.status
     end
@@ -55,11 +55,15 @@ class MembersController < ApplicationController
   
   # Only allow a trusted parameter "white list" through.
   def member_params
-    params.require(:member).permit(:name, :deleted_at)
+    begin
+      params.require(:member).permit(:name, :deleted_at)
+    rescue ActionController::ParameterMissing
+      @member.attributes
+    end
   end
 
   def opt_params
-    params.permit(:role_id, :leave_role, :hard_delete)
+    params.permit(:hard_delete, roles: [:id, :leave_role])
   end
 
 end

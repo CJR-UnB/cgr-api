@@ -3,45 +3,49 @@ module MemberManager
         
         attr_reader :current_user, :member, :member_params
 
-        def initialize(current_user, member, member_params = {}, opt_params = {})
+        def initialize(current_user, member, params = {}, options = {})
             
             @current_user = current_user
             @member = member
-            @member_params = member_params
+            @params = params
+            @options = options
 
-            check_roles(opt_params)
-            @member = Member.find_by(id: @member.id)
+            set_defaults
+            check_roles
         end 
 
         def execute
+            return OpenStruct.new(success?: false,
+                member: nil,
+                errors: {error: "Not Authorized: User must be admin OR the same as target"},
+                status: :unauthorized) unless can_update?
             
-            if can_update?
-                return OpenStruct.new(success?: false, 
-                    member: nil, 
-                    errors: @member.errors, 
-                    status: :unprocessable_entity) unless @member.update(@member_params)
-                OpenStruct.new(success?: true, 
+            return OpenStruct.new(success?: false, 
+                member: nil, 
+                errors: @member.errors, 
+                status: :unprocessable_entity) unless @member.update(@params)
+
+            OpenStruct.new(success?: true, 
                     member: @member, 
                     errors: nil,
                     status: :ok)
-            else
-                OpenStruct.new(success?: false,
-                    member: nil,
-                    errors: {error: "Not Authorized: User must be admin OR the same as target"},
-                    status: :unauthorized)
-            end
         end 
 
         private 
 
-        def check_roles(opt_params)
-            if opt_params[:role_id]
-                if opt_params[:leave_role]
-                    @member.leave_role(opt_params[:role_id])
-                else 
-                    @member.join_role(opt_params[:role_id])
-                end
+        def set_defaults
+            @defaults = {}
+            @defaults[:team] = Team.find_or_create_by(name: 'Visitantes')
+            @defaults[:role] = Role.find_or_create_by({name: 'Visitante', team: @defaults[:team]})
+        end
+
+        def check_roles
+            return @member.join_role(@defaults[:role].id) unless @options[:roles] 
+
+            @options[:roles].each do |role|
+                role[:leave_role] ? @member.leave_role(role[:id]) : @member.join_role(role[:id])
             end
+            @member.reload
         end
 
         # Para atualizar as informações de um membro, o usuário deve ser admin
