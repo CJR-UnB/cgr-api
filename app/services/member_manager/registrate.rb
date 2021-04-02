@@ -27,10 +27,10 @@ module MemberManager
         end
 
         def check_role
-            if @options[:role_id] || @options[:role]
-                @member.join_role(@options[:role_id])
-            else  
-                @member.join_role(@defaults[:role].id)
+            return @member.join_role(@defaults[:role].id) unless @options[:roles] 
+            
+            @options[:roles].each do |role| 
+                @member.join_role(role[:id])
             end
         end
 

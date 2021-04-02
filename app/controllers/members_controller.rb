@@ -59,7 +59,7 @@ class MembersController < ApplicationController
   end
 
   def opt_params
-    params.permit(:role_id, :leave_role, :hard_delete)
+    params.permit(:hard_delete, roles: [:id, :leave_role])
   end
 
 end
