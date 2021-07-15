@@ -5,5 +5,5 @@ class Team < ApplicationRecord
     include SoftDeletable
     
     validates :name, uniqueness: true, presence: true
-    validates :initials, uniqueness: true
+
 end
