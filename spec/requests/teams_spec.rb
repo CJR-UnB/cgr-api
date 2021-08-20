@@ -15,6 +15,18 @@ RSpec.describe "TeamsController", :type => :request do
         expect(response).to have_http_status(:created)
     end
 
+    it "creates a Team with a role" do 
+        headers = { "ACCEPT" => "application/json" }
+        team = { :name => "Núcleo de Organização Empresarial", 
+                 :initials => "NOE" }
+        role = { :name => "Assessor de Organização Empresarial"}
+        post "/teams", :params => { :team => team, :roles => [ role ] }, :headers => headers
+
+        expect(response.content_type).to match(/application\/json/)
+        expect(response).to have_http_status(:created)
+    end
+
+
     it "shows all Teams information" do 
         get "/teams"
 

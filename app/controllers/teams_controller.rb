@@ -1,6 +1,8 @@
 class TeamsController < ApplicationController
   before_action :set_team, only: [:show, :update, :destroy]
 
+  include TeamManager
+
   # GET /teams
   def index
     @teams = Team.all
@@ -15,12 +17,12 @@ class TeamsController < ApplicationController
 
   # POST /teams
   def create
-    @team = Team.new(team_params)
+    result = TeamManager::Registrate.call(team_params, roles_params)
 
-    if @team.save
-      render json: @team, status: :created, location: @team
+    if result.success?
+      render json: result.team, status: :created, location: result.team
     else
-      render json: @team.errors, status: :unprocessable_entity
+      render json: result.errors, status: :unprocessable_entity
     end
   end
 
@@ -51,5 +53,14 @@ class TeamsController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def team_params
       params.require(:team).permit(:name, :initials)
+    end
+
+    def roles_params
+      roles = params.fetch(roles, [])
+      roles_params = []
+      roles.each do |r| 
+        roles_params += r.permit(:name, :leader)
+      end 
+      roles_params
     end
 end
