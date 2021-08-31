@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
     before_action :set_user, only: [:show, :update, :destroy]
-    before_action :authenticate_user, only: [:update, :destroy]
+    before_action :authenticate_user, only: [:create, :update, :destroy]
 
     include UserManager
 
@@ -16,8 +16,11 @@ class UsersController < ApplicationController
 
     # POST /users
     def create
-        result = UserManager::Registrate.call(user_params, member_params)
-
+        if @current_user.is_admin?
+            result = UserManager::Registrate.call(user_params, member_params)
+        else
+            result = false
+        end  
         if result.success?
           render json: result.user, include: [:member], status: :created, location: result.user
         else
