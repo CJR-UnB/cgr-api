@@ -60,8 +60,8 @@ class UsersController < ApplicationController
 
     def member_params
         member_params = { 
-                member:  params.fetch(:member, {}).permit(:name, :deleted_at),
-                options:  params.permit(:role_id, :leave_role, :hard_delete)
+                member:  params.fetch(:member, {}).permit(:name),
+                options:  params.permit(:join_roles, :leave_roles, :hard_delete)
             }
         member_params ? member_params : nil
          

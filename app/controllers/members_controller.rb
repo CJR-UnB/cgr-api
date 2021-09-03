@@ -18,6 +18,7 @@ class MembersController < ApplicationController
   # POST /members
   def create
     result = MemberManager::Registrate.call(member_params, opt_params)
+    
 
     if result.success?
       render json: result.member, include: [:teams, :roles], status: :created, location: result.member
@@ -63,7 +64,7 @@ class MembersController < ApplicationController
   end
 
   def opt_params
-    params.permit(:hard_delete, roles: [:id, :leave_role])
+    params.permit(:hard_delete, join_roles: [], leave_roles: [])
   end
 
 end
