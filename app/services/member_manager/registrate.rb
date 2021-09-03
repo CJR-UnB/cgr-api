@@ -1,5 +1,5 @@
 module MemberManager
-    class Registrate < ApplicationService
+    class Registrate < MemberService
 
         attr_reader :member, :options
 
@@ -14,7 +14,7 @@ module MemberManager
             return OpenStruct.new(  success?: false, 
                                     member: nil, 
                                     errors: @member.errors) unless @member.save
-            check_role
+            check_roles
             OpenStruct.new(success?: true, member: @member, errors: nil)
         end
 
@@ -24,14 +24,6 @@ module MemberManager
             @defaults = {}
             @defaults[:team] = Team.find_or_create_by(name: 'Visitantes')
             @defaults[:role] = Role.find_or_create_by({name: 'Visitante', team: @defaults[:team]})
-        end
-
-        def check_role
-            return @member.join_role(@defaults[:role].id) unless @options[:roles] 
-            
-            @options[:roles].each do |role| 
-                @member.join_role(role[:id])
-            end
         end
 
     end
