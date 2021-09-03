@@ -12,6 +12,10 @@ class Member < ApplicationRecord
         MemberRole.find_or_create_by!({member_id: self.id, role_id: role_id})
     end
 
+    def join_roles(role_ids)
+        join_role(role_ids)
+    end
+
     def leave_role(role_id)
         relation = MemberRole.where({member_id: self.id, role_id: role_id})
         relation = relation.first
@@ -19,5 +23,11 @@ class Member < ApplicationRecord
             relation.delete
         end 
     end
+
+    def leave_roles(role_ids)
+        leave_role(role_ids)
+    end
+
+
 
 end

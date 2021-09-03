@@ -1,6 +1,5 @@
 module MemberManager
-    class Update < ApplicationService
-        
+    class Update < MemberService
         attr_reader :current_user, :member, :member_params
 
         def initialize(current_user, member, params = {}, options = {})
@@ -37,15 +36,6 @@ module MemberManager
             @defaults = {}
             @defaults[:team] = Team.find_or_create_by(name: 'Visitantes')
             @defaults[:role] = Role.find_or_create_by({name: 'Visitante', team: @defaults[:team]})
-        end
-
-        def check_roles
-            return @member.join_role(@defaults[:role].id) unless @options[:roles] 
-
-            @options[:roles].each do |role|
-                role[:leave_role] ? @member.leave_role(role[:id]) : @member.join_role(role[:id])
-            end
-            @member.reload
         end
 
         # Para atualizar as informações de um membro, o usuário deve ser admin
