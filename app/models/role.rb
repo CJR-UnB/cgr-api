@@ -2,6 +2,7 @@ class Role < ApplicationRecord
     has_many :member_roles
     has_many :members, through: :member_roles
     belongs_to :team
+
     # Adicionar flag que identifica se o cargo é de um 'leader'
     # Dica: Criar migration para adicionar atributo 'leader' do tipo 'boolean' 
 
