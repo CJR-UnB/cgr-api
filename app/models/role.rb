@@ -10,4 +10,6 @@ class Role < ApplicationRecord
     
     validates :name, presence: true
     validates :team, presence: true
+    validates :flag, presence: true
+    
 end
