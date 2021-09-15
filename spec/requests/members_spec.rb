@@ -2,7 +2,16 @@ require "rails_helper"
 
 RSpec.describe "MembersController", :type => :request do
 
-    before(:all) { @members_path = "/members"}
+    before(:all) { 
+        @members_path = "/members"
+        @role = create(:role)
+        @team = @role.team
+    }
+
+    after(:all){
+        @role.hard_destroy
+        @team.hard_destroy
+    }
 
     # GET /members
     describe "#index" do
@@ -23,50 +32,87 @@ RSpec.describe "MembersController", :type => :request do
 
     # POST /members 
     describe "#create" do 
-        before(:context) do
+        before(:all){
+            @previous_count = Member.count 
             @headers = { "ACCEPT" => "application/json" }
             @new_member = { :name => "Valentin Ferreira Paes" }
-            post @members_path, :params => { :member => @new_member }, :headers => @headers
-            @body = JSON.parse(response.body)
-        end
+        }
 
-        after(:context) do
-            Member.find_by(name: @new_member[:name]).destroy 
-        end 
+        context "without a role" do 
+            before(:context) do
+                post @members_path, :params => { :member => @new_member }, :headers => @headers
+                @body = JSON.parse(response.body)
+            end
 
-        describe "response" do
-            it "returns a JSON" do
-                expect(response.content_type).to match(/application\/json/)
+            after(:context) do
+                Member.find_by(name: @new_member[:name]).destroy 
             end 
 
-            it "returns HTTP status 201 (Created)" do
-                expect(response).to have_http_status(:created)
-            end
-            
-            it "returns a Member matching the params given" do
-                expect(@body['name']).to eq(@new_member[:name])
-            end
+            describe "response" do
+                it "returns a JSON" do
+                    expect(response.content_type).to match(/application\/json/)
+                end 
 
-            it "creates a new Member" do
-                expect{ 
-                    post @members_path, :params => { :member => { :name => "Dapedo"}}, :headers => @headers
-                }.to change(Member, :count).by(1)
+                it "returns HTTP status 201 (Created)" do
+                    expect(response).to have_http_status(:created)
+                end
+                
+                it "returns a member with their matching the name given" do
+                    expect(@body['name']).to eq(@new_member[:name])
+                end
+
+                it "creates a new member" do
+                    expect(Member.count).to eq(@previous_count + 1)
+                end
+            end
+        end
+
+        context "with a role" do 
+            context "the role is valid" do
+                before(:context) do
+                    post @members_path, :params => { :member => @new_member, :join_roles => [@role.id] }, :headers => @headers
+                    @body = JSON.parse(response.body)
+                end
+    
+                after(:context) do
+                    Member.find_by(name: @new_member[:name]).destroy 
+                end
+
+                describe "response" do
+                    it "returns a JSON" do
+                        expect(response.content_type).to match(/application\/json/)
+                    end 
+    
+                    it "returns HTTP status 201 (Created)" do
+                        expect(response).to have_http_status(:created)
+                    end
+                    
+                    it "returns a member with their name matching the name given" do
+                        expect(@body['name']).to eq(@new_member[:name])
+                    end
+
+                    it "returns a member with a role matching the role given" do 
+                        expect(@body['roles'].last['id']).to eq(@role.id)
+                    end
+    
+                    it "creates a new Member" do
+                        expect(Member.count).to eq(@previous_count + 1)
+                    end
+                end
+            end 
+
+            context "the role is not valid" do 
             end
         end
     end
 
     context "existing single Member actions" do 
         before(:context) do 
-            @role = create(:role)
-            @team = @role.team
             @member = create(:member, roles: [@role])
         end
 
         after(:context) do
-            MemberRole.delete_all
-            Role.delete_all
-            Team.delete_all
-            Member.delete_all
+            @member.hard_destroy
         end 
 
         # GET /members/:id
