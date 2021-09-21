@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
     before_action :set_user, only: [:show, :update, :destroy]
-    before_action :authenticate_user, only: [:update, :destroy]
+    before_action :authenticate_user, only: [:create, :update, :destroy]
 
     include UserManager
 
@@ -16,8 +16,11 @@ class UsersController < ApplicationController
 
     # POST /users
     def create
-        result = UserManager::Registrate.call(user_params, member_params)
-
+        if @current_user.is_admin?
+            result = UserManager::Registrate.call(user_params, member_params)
+        else
+            result = false
+        end  
         if result.success?
           render json: result.user, include: [:member], status: :created, location: result.user
         else
@@ -57,8 +60,8 @@ class UsersController < ApplicationController
 
     def member_params
         member_params = { 
-                member:  params.fetch(:member, {}).permit(:name, :deleted_at),
-                options:  params.permit(:role_id, :leave_role, :hard_delete)
+                member:  params.fetch(:member, {}).permit(:name),
+                options:  params.permit(:hard_delete, join_roles: [], leave_roles: [])
             }
         member_params ? member_params : nil
          

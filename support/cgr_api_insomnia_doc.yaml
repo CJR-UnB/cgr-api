@@ -1,0 +1,218 @@
+openapi: 3.0.0
+info: 
+  description: "Esse documento lista e exemplifica as requisições da API do
+    sistema CGR."
+
+  version: 0.1.0
+  title: CGR - API
+tags:
+  - name: member
+    description: membros
+  - name: team
+    description: times
+  - name: role
+    description: cargos
+  - name: user
+    description: usuários
+  - name: authentication
+    description: autenticação
+paths:
+  /member:
+    post:
+      tags:
+        - member
+      summary: Cadastra um novo membro
+      description: ""
+      operationId: createMember
+      requestBody:
+        $ref: "#/components/requestBodies/Member"
+      responses:
+        "200": 
+          description: Criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member-Response"
+        "405":
+          description: Invalid input
+    put:
+      tags:
+        - member
+      summary: Atualiza os dados de um membro cadastrado
+      description: ""
+      operationId: updateMember
+      requestBody:
+        $ref: "#/components/requestBodies/Member"
+        "200": 
+          description: Atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member-Response"
+        "405":
+          description: Invalid input
+components: 
+  requestBodies:
+    Member:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Member"
+        description: Um membro que partipa(ou) da empresa.
+        required: true
+  schemas:
+    Member:
+      type: object
+      required:
+        - name
+      properties:
+        member:
+          type: object
+          properties:
+            name: 
+              type: string
+              example: Alice da Costa Borges
+            deleted-at:
+              type: string
+              format: date-time
+              example: null
+        hard_delete:
+          type: boolean
+          example: false
+          description: \[PERIGO!\] Informa se o membro da requisição deve ser apagado.
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                example: 1
+              leave_role:
+                description: Informa se a operação relativa ao cargo deve ser participar
+                  (false), ou sair (true)
+                type: boolean
+                example: false
+    Member-Response:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: null
+        name:
+          type: string
+          example: Alice da Costa Borges
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+          example: null
+    Team:
+      type: object
+      required: 
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: Núcleo de Talentos
+        initials:
+          type: string
+          example: NUT
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+    Role:
+      type: object
+      required: 
+        - team_id 
+        - name
+      properties:
+        team_id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Consultor de Talentos
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+          example: null
+      MemberRole:
+        type: object
+        required:
+          - role_id
+          - member_id
+        properties:
+          id:
+            type: integer
+            format: int64
+          member_id:
+            type: integer
+            format: int64
+          role_id:
+            type: integer
+            format: int64
+          entry_date:
+            type: string
+            format: date-time
+          created_at:
+            type: string
+            format: date-time
+          updated_at:
+            type: string
+            format: date-time
+          deleted_at:
+            type: string
+            format: date-time
+      User:
+        type: object
+        required:
+          - id
+          - email
+        properties:
+          id:
+            type: integer
+            format: int64
+          name:
+            type: string
+            example: Larissa Andrade
+          member_id:
+            type: integer
+            format: int64
+          admin:
+            type: boolean
+          created_at:
+            type: string
+            format: date-time
+          updated_at:
+            type: string
+            format: date-time
