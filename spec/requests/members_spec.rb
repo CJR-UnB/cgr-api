@@ -141,7 +141,7 @@ RSpec.describe "MembersController", :type => :request do
         # PATCH/PUT /members/:id
         describe "#update" do
             describe "errors" do 
-                describe "trying to update without permission" do 
+                context "trying to update without permission" do 
                     # "permission" = Current user is NEITHER an admin OR current member's user 
                     before(:context) do
                         @new_member = {name: "Natália"}
@@ -164,7 +164,7 @@ RSpec.describe "MembersController", :type => :request do
                     end
                 end 
 
-                describe "trying to update without valid params" do 
+                context "trying to update without valid params" do 
                     before(:context) do
                         token = login_admin
                         @new_member = {name: nil}
@@ -186,9 +186,16 @@ RSpec.describe "MembersController", :type => :request do
                         end
                     end
                 end
+
+                context "trying to update a member that it not accessible (soft delete / does not exist)" do 
+                    describe "response" do
+                        it "returns a JSON (?)" #verificar o que retorna nesse caso
+                        it "returns a HTTP status 404 (Not Found)"
+                    end 
+                end
             end 
 
-            describe "add single role" do
+            context "add a single role" do
                 before(:context) do
                     token = login_admin
                     @new_role = create(:role, team: create(:team, name: "Equipe CGR"), name: "Dev")
@@ -198,8 +205,8 @@ RSpec.describe "MembersController", :type => :request do
 
                 after(:context) do 
                     team = @new_role.team  
-                    @new_role.destroy
-                    team.destroy
+                    @new_role.hard_destroy
+                    team.hard_destroy
                 end 
 
                 describe "response" do 
@@ -211,7 +218,7 @@ RSpec.describe "MembersController", :type => :request do
                         expect(response).to have_http_status(:ok)
                     end 
 
-                    it "returns a member with their name matching the name given" do
+                    it "returns a member with their name matching the given member's name" do
                         expect(@body['name']).to eq(@member[:name])
                     end
 
@@ -221,7 +228,7 @@ RSpec.describe "MembersController", :type => :request do
                 end  
             end 
             
-            describe "remove single role" do 
+            context "remove a single role" do 
                 before(:context) do
                     token = login_admin
                     put @member_path, :params => { :leave_roles => [@role.id]}, :headers => {"Authorization" => token}
@@ -237,7 +244,7 @@ RSpec.describe "MembersController", :type => :request do
                         expect(response).to have_http_status(:ok)
                     end 
 
-                    it "returns a member with their name matching the name given" do
+                    it "returns a member with their name matching the given member's name'" do
                         expect(@body['name']).to eq(@member[:name])
                     end 
 
@@ -246,46 +253,49 @@ RSpec.describe "MembersController", :type => :request do
                     end 
                 end
             end
+
+            context "change attributes" do 
+                describe "response" do 
+                    it "returns a JSON"
+                    it "returns a HTTP status 200 (OK)"
+                    it "returns a member with their name matching the name given"
+                end
+            end 
         end
+
+        describe "#delete" do
+            describe "errors" do
+                context "trying to delete without permission" do
+                end
+
+                context "trying to soft delete a member that it not accessible (soft delete / does not exist)" do 
+                    describe "response" do
+                        it "returns a JSON (?)" #verificar o que retorna nesse caso
+                        it "returns a HTTP status 404 (Not Found)"
+                    end 
+                end
+
+                context "trying to hard delete without beeing logged in as an admin" do
+                    it "returns a JSON (?)" #verificar o que retorna nesse caso 
+                    it "returns a HTTP status 401 (Unauthorized)"
+                end
+            end 
+            context "soft delete" do 
+                describe "response" do
+                    it "returns a JSON (?)" #verificar o que retorna nesse caso 
+                    it "returns a HTTP status 200 (OK)"
+                    it "fills the member's field 'deleted_at'" #verificar se o campo deleted_at não está nulo
+                end 
+            end
+            context "hard delete" do 
+                describe "response" do
+                    it "returns a JSON (?)" #verificar o que retorna nesse caso 
+                    it "returns a HTTP status 200 (OK)"
+                    it "removes the member from the database" #verificar se o membro foi removido do banco
+                end 
+            end
+        end 
     end 
-
-    # it "updates a Member info" do
-    #     headers = { "ACCEPT" => "application/json" }
-    #     put "/members/#{larissa.id}", :params => { :member => {:name => "Larissinha lindinha"} }, :headers => headers
-    #     body = JSON.parse(response.body)
-        
-    #     expect(response.content_type).to match(/application\/json/)
-    #     expect(response).to have_http_status(:ok)
-    #     expect(body['name']).to eq("Larissinha lindinha")
-    # end
-
-    # it "makes a Member join a role" do 
-    #     headers = { "ACCEPT" => "application/json" }
-    #     new_role = Role.create!({:name => "Consultora de Atendimento e Vendas", :team => bope})
-    #     put "/members/#{larissa.id}", :params => { :member => {:id => larissa.id}, :role_id => new_role.id}, :headers => headers
-    #     body = JSON.parse(response.body)
-        
-    #     expect(response.content_type).to match(/application\/json/)
-    #     expect(response).to have_http_status(:ok)
-    #     expect(body['roles'][-1]['name']).to eq(new_role.name)
-    # end
-
-    # it "makes a Member leave a role" do 
-    #     headers = { "ACCEPT" => "application/json" }
-    #     put "/members/#{larissa.id}", :params => { :member => {:id => larissa.id}, :role_id => lider.id, :leave_role => true}, :headers => headers
-    #     body = JSON.parse(response.body)
-        
-    #     expect(response.content_type).to match(/application\/json/)
-    #     expect(response).to have_http_status(:ok)
-    #     expect(body['roles'][-1]).to eq(nil)
-    # end
-
-    # it "deletes a Member" do
-    #     headers = { "ACCEPT" => "application/json" }
-    #     delete "/members/#{larissa.id}", :headers => headers
-        
-    #     expect(response).to have_http_status(:no_content)
-    # end 
 end
 
 def login_admin
