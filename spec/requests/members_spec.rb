@@ -106,7 +106,7 @@ RSpec.describe "MembersController", :type => :request do
         end
     end
 
-    context "existing single Member actions" do 
+    context "existing member actions" do 
         before(:context) do 
             @member = create(:member, roles: [@role])
             @member_path = @members_path + "/#{@member.id}"
@@ -140,6 +140,54 @@ RSpec.describe "MembersController", :type => :request do
 
         # PATCH/PUT /members/:id
         describe "#update" do
+            describe "errors" do 
+                describe "trying to update without permission" do 
+                    # "permission" = Current user is NEITHER an admin OR current member's user 
+                    before(:context) do
+                        @new_member = {name: "Natália"}
+                        put @member_path, :params => {member: @new_member}
+                        @body = JSON.parse(response.body)
+                    end 
+
+                    describe "response" do
+                        it "returns a JSON" do
+                            expect(response.content_type).to match(/application\/json/)
+                        end 
+
+                        it "returns a HTTP status 401 (Unauthorized)" do 
+                            expect(response).to have_http_status(:unauthorized)
+                        end 
+
+                        it "returns a member with their name not matching the name given" do 
+                            expect(@body['name']).to_not eq(@new_member[:name])
+                        end
+                    end
+                end 
+
+                describe "trying to update without valid params" do 
+                    before(:context) do
+                        token = login_admin
+                        @new_member = {name: nil}
+                        put @member_path, :params => {member: @new_member}, :headers => {"Authorization" => token}
+                        @body = JSON.parse(response.body)
+                    end 
+
+                    describe "response" do
+                        it "returns a JSON" do
+                            expect(response.content_type).to match(/application\/json/)
+                        end 
+
+                        it "returns a HTTP status 422 (Unprocessable Entity)" do 
+                            expect(response).to have_http_status(:unprocessable_entity)
+                        end 
+
+                        it "returns a member with their name not matching the name given" do 
+                            expect(@body['name']).to_not eq(@new_member[:name])
+                        end
+                    end
+                end
+            end 
+
             describe "add single role" do
                 before(:context) do
                     token = login_admin
