@@ -109,6 +109,7 @@ RSpec.describe "MembersController", :type => :request do
     context "existing single Member actions" do 
         before(:context) do 
             @member = create(:member, roles: [@role])
+            @member_path = @members_path + "/#{@member.id}"
         end
 
         after(:context) do
@@ -118,7 +119,7 @@ RSpec.describe "MembersController", :type => :request do
         # GET /members/:id
         describe "#show" do 
             before(:context) do 
-                get (@members_path + "/#{@member.id}")
+                get (@member_path)
                 @body = JSON.parse(response.body)
             end 
 
@@ -135,6 +136,68 @@ RSpec.describe "MembersController", :type => :request do
                     expect(@body['name']).to eq(@member.name)
                 end
             end 
+        end
+
+        # PATCH/PUT /members/:id
+        describe "#update" do
+            describe "add single role" do
+                before(:context) do
+                    token = login_admin
+                    @new_role = create(:role, team: create(:team, name: "Equipe CGR"), name: "Dev")
+                    put @member_path, :params => {:join_roles => [@new_role.id]}, :headers => {"Authorization" => token}
+                    @body = JSON.parse(response.body)
+                end
+
+                after(:context) do 
+                    team = @new_role.team  
+                    @new_role.destroy
+                    team.destroy
+                end 
+
+                describe "response" do 
+                    it "returns a JSON" do 
+                        expect(response.content_type).to match(/application\/json/)
+                    end
+    
+                    it "returns a HTTP status 200 (OK)" do 
+                        expect(response).to have_http_status(:ok)
+                    end 
+
+                    it "returns a member with their name matching the name given" do
+                        expect(@body['name']).to eq(@member[:name])
+                    end
+
+                    it "returns a member with a role matching the role given" do 
+                        expect(@body['roles'].last['id']).to eq(@new_role.id)
+                    end
+                end  
+            end 
+            
+            describe "remove single role" do 
+                before(:context) do
+                    token = login_admin
+                    put @member_path, :params => { :leave_roles => [@role.id]}, :headers => {"Authorization" => token}
+                    @body = JSON.parse(response.body)
+                end 
+
+                describe "response" do
+                    it "returns a JSON" do
+                        expect(response.content_type).to match(/application\/json/)
+                    end
+
+                    it "returns a HTTP status 200 (OK)" do
+                        expect(response).to have_http_status(:ok)
+                    end 
+
+                    it "returns a member with their name matching the name given" do
+                        expect(@body['name']).to eq(@member[:name])
+                    end 
+
+                    it "returns a member without a role matching the role given" do
+                        expect(@body['roles'].pluck("id")).to_not include(@role.id)
+                    end 
+                end
+            end
         end
     end 
 
@@ -175,4 +238,10 @@ RSpec.describe "MembersController", :type => :request do
         
     #     expect(response).to have_http_status(:no_content)
     # end 
+end
+
+def login_admin
+    post '/authenticate', :params => {email: "admin@admin.com", password: "popao123"}
+    body = JSON.parse(response.body)
+    body["auth_token"]
 end
