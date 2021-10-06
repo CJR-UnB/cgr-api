@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :payments
+  resources :projects
   resources :teams, shallow: true do 
     resources :roles 
   end
