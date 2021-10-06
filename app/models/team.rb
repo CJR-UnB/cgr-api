@@ -4,10 +4,18 @@ class Team < ApplicationRecord
     
     belongs_to :parent, class_name: 'Team', optional: true
     has_many :children, class_name: 'Team', foreign_key: 'parent_id'
-    belongs_to :payment
+    belongs_to :project
     include SoftDeletable
     
     validates :name, uniqueness: true, presence: true
+    
+    def members
+        members = []
+        self.roles.all.each do |role|
+          members = members + role.members.all
+        end
+        members
+    end
     # Validar se apenas um cargo (ou nenhum) tem a flag de 'leader'
     # Dica: Usar método 'validate' como:
     #
