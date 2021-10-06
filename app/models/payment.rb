@@ -1,5 +1,4 @@
 class Payment < ApplicationRecord
-    has_one :payment, optional: true
-    
+    belongs_to :project
 
 end

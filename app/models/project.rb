@@ -1,4 +1,4 @@
 class Project < ApplicationRecord
-  belongs_to :teams
-  belongs_to :payments
+  belongs_to :team
+  has_many :payments
 end

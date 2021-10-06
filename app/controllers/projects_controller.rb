@@ -2,18 +2,18 @@ class ProjectsController < ApplicationController
   before_action :set_project, only: %i[ show update destroy ]
 
   # GET /projects
-  # GET /projects.json
   def index
-    @projects = Project.includes(:team_id, :roles, :members)
+    @projects = Project.all
+    
+    render json: @projects, include: [:team]
   end
 
   # GET /projects/1
-  # GET /projects/1.json
   def show
+    render json: @project, include: [:team]
   end
 
   # POST /projects
-  # POST /projects.json
   def create
     @project = Project.new(project_params)
 
@@ -25,7 +25,6 @@ class ProjectsController < ApplicationController
   end
 
   # PATCH/PUT /projects/1
-  # PATCH/PUT /projects/1.json
   def update
     if @project.update(project_params)
       render :show, status: :ok, location: @project
@@ -35,7 +34,6 @@ class ProjectsController < ApplicationController
   end
 
   # DELETE /projects/1
-  # DELETE /projects/1.json
   def destroy
     @project.destroy
   end

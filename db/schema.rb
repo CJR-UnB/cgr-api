@@ -57,23 +57,23 @@ ActiveRecord::Schema.define(version: 2021_09_29_143726) do
   end
 
   create_table "roles", force: :cascade do |t|
-    t.bigint "parent_id"
     t.bigint "team_id"
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.boolean "leader"
-    t.index ["parent_id"], name: "index_roles_on_parent_id"
     t.index ["team_id"], name: "index_roles_on_team_id"
   end
 
   create_table "teams", force: :cascade do |t|
+    t.bigint "parent_id"
     t.string "name"
     t.string "initials"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.index ["parent_id"], name: "index_teams_on_parent_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -90,6 +90,6 @@ ActiveRecord::Schema.define(version: 2021_09_29_143726) do
   add_foreign_key "members", "users"
   add_foreign_key "projects", "payments"
   add_foreign_key "projects", "teams"
-  add_foreign_key "roles", "roles", column: "parent_id"
   add_foreign_key "roles", "teams"
+  add_foreign_key "teams", "teams", column: "parent_id"
 end
