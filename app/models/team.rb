@@ -4,7 +4,7 @@ class Team < ApplicationRecord
     
     belongs_to :parent, class_name: 'Team', optional: true
     has_many :children, class_name: 'Team', foreign_key: 'parent_id'
-    belongs_to :project
+    belongs_to :project , optional: true
     include SoftDeletable
     
     validates :name, uniqueness: true, presence: true
