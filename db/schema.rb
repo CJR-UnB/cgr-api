@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_13_205929) do
+ActiveRecord::Schema.define(version: 2021_12_08_134211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,24 +35,47 @@ ActiveRecord::Schema.define(version: 2021_09_13_205929) do
     t.index ["user_id"], name: "index_members_on_user_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.integer "amount"
+    t.boolean "payed"
+    t.date "payment_date"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.bigint "team_id"
+    t.bigint "payment_id"
+    t.string "name"
+    t.string "client_info"
+    t.string "project_info"
+    t.datetime "deleted_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["payment_id"], name: "index_projects_on_payment_id"
+    t.index ["team_id"], name: "index_projects_on_team_id"
+  end
+
   create_table "roles", force: :cascade do |t|
-    t.bigint "parent_id"
     t.bigint "team_id"
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.boolean "leader"
-    t.index ["parent_id"], name: "index_roles_on_parent_id"
+    t.text "description"
     t.index ["team_id"], name: "index_roles_on_team_id"
   end
 
   create_table "teams", force: :cascade do |t|
+    t.bigint "parent_id"
     t.string "name"
     t.string "initials"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.text "description"
+    t.index ["parent_id"], name: "index_teams_on_parent_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -67,6 +90,8 @@ ActiveRecord::Schema.define(version: 2021_09_13_205929) do
   add_foreign_key "member_roles", "members"
   add_foreign_key "member_roles", "roles"
   add_foreign_key "members", "users"
-  add_foreign_key "roles", "roles", column: "parent_id"
+  add_foreign_key "projects", "payments"
+  add_foreign_key "projects", "teams"
   add_foreign_key "roles", "teams"
+  add_foreign_key "teams", "teams", column: "parent_id"
 end

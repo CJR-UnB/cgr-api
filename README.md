@@ -8,10 +8,13 @@ API do sistema CGR da CJR.
 * [Especificações](#especificações)
 * [CI/CD](#ci-cd)
 * [Entidades](#entidades)
+    * [User](#user)
     * [Member](#member)
     * [Team](#ream)
     * [Role](#role)
     * [MemberRole](#memberrole)
+    * [Payment](#payment)
+    * [Project](#project)
 * [Requisições](#requisições)
 
 <a name="specification"> </a>
@@ -38,6 +41,19 @@ em um terminal bash ou zsh.
 ## Entidades
 
 Atualmente, a API conta com as seguintes entidades:
+
+#### User
+
+Um usuario cadastrado no sistema pode acessar os dados referente as equipes, no qaul ele esta alocado, e a sua política de benefícios no sistema. Caso o usuario seja um admin pode criar novas equipe e projetos, além de alocar membros nos projetos e núcleos da empresa.
+
+| value     	| type   	    |
+|:-------------:|:-------------:|
+| id    	    | integer      	|
+| name    	    | string    	|
+| email    	    | string      	|
+| admin    	    | boolean    	|
+| deleted_at 	| date_time 	|
+
 
 #### Member
 
@@ -83,6 +99,30 @@ Relação entre um membro e um cargo (e, por extensão, um time). Essas relaçõ
 | entry_date 	| date_time  	|
 | deleted_at 	| date_time  	|
 
+#### Payment
+
+Um pagamento será registrado no sistema toda vez que confirmar o pagamento de parcela, seja ela única ou mensal, mantendo assim um registro para realizar as funcionalidades do sistema. 
+
+| value      	| type         	|
+|:----------:	|:-----------:	|
+| id    	    | integer   	|
+| amount       	| integer   	|
+| payed     	| boolean 	    |
+| payment_date  | date    	    |
+
+#### Project
+
+Um projeto no sistema vai armazenar alguns dados importante para a empresa como: nome do projeto, descrição, extrato dos pagamento já realizados e equipe responsavel pelo projeto.
+
+| value      	| type         	|
+|:----------:	|:-----------:	|
+| id    	    | integer   	|
+| team_id   	| foreign_key 	|
+| payment_id	| foreign_key 	|
+| name       	| string    	|
+| client_info 	| string    	|
+| project_info 	| string  	    |
+| deleted_at 	| date_time  	|
 
 ## Requisições
 
@@ -220,5 +260,94 @@ Atualiza as informações de um cargo, com base em seu `id`. Pode restaurar o ca
 ##### DELETE /roles/:id
 
 Atualiza o valor de `deleted_at` para o momento da requisição.
+
+
+#### Project
+```http
+    GET         /projects/
+    GET         /projects/:id
+    POST        /projects/
+    PATCH/PUT   /projects/:id
+    DELETE      /projects/:id
+```
+
+##### GET /projects/
+
+Retorna todos os projetos não apagados do sistema
+
+* **content_type**: application/json
+* **response**: project[]{ team }
+
+##### GET /projects/:id
+
+Retorna um projeto e a equipe responsavel com base em seu `id`, caso não esteja apagado
+
+* **content_type**: application/json
+* **response**: project[]{ team }
+
+##### POST /projects/
+
+Cria um projeto com um time específico no sistema.
+
+* **body**: team_id, payment_id(opt), name, client_info, project_info
+* **content_type**: application/json
+* **response**: project
+
+##### PATCH/PUT /projects/:id
+
+Atualiza as informações de um projeto, com base em seu `id`. Pode restaurar o cargo caso tenha sido apagado.
+
+* **body**: team_id, payment_id(opt), name, client_info, project_info, deleted_at
+* **content_type**: application/json
+* **response**: project
+
+##### DELETE /projects/:id
+
+Atualiza o valor de `deleted_at` para o momento da requisição.
+
+
+#### Payments
+```http
+    GET         /payments/
+    GET         /payments/:id
+    POST        /payments/
+    PATCH/PUT   /payments/:id
+    DELETE      /payments/:id
+```
+
+##### GET /payments/
+
+Retorna todos os pagamentos não apagados do sistema
+
+* **content_type**: application/json
+* **response**: payments[]
+
+##### GET /payments/:id
+
+Retorna um pagamento com base em seu `id`, caso não esteja apagado
+
+* **content_type**: application/json
+* **response**: payment[]
+
+##### POST /payments/
+
+Adiciona um pagamento no sistema.
+
+* **body**: amount, payed, payment_date
+* **content_type**: application/json
+* **response**: payment
+
+##### PATCH/PUT /payments/:id
+
+Atualiza as informações de um pagamento, com base em seu `id`. Pode restaurar o cargo caso tenha sido apagado.
+
+* **body**: amount, payed, payment_date
+* **content_type**: application/json
+* **response**: payment
+
+##### DELETE /payments/:id
+
+Atualiza o valor de `deleted_at` para o momento da requisição.
+
 
 * **response**: nil

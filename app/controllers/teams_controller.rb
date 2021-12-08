@@ -1,5 +1,5 @@
 class TeamsController < ApplicationController
-  before_action :set_team, only: [:show, :update, :destroy]
+  before_action :set_team, only: [:show, :show_members, :update, :destroy]
 
   include TeamManager
 
@@ -7,12 +7,12 @@ class TeamsController < ApplicationController
   def index
     @teams = Team.all
 
-    render json: @teams, include: [:roles]
+    render json: @teams, include: [:roles, :members]
   end
 
   # GET /teams/1
   def show
-    render json: @team, include: [:roles]
+    render json: @team, include: [:roles, :members]
   end
 
   # POST /teams
@@ -52,7 +52,7 @@ class TeamsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def team_params
-      params.require(:team).permit(:name, :initials)
+      params.require(:team).permit(:name, :initials, :description)
     end
 
     def roles_params
