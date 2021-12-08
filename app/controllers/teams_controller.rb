@@ -52,7 +52,7 @@ class TeamsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def team_params
-      params.require(:team).permit(:name, :initials)
+      params.require(:team).permit(:name, :initials, :description)
     end
 
     def roles_params
