@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_29_143726) do
+ActiveRecord::Schema.define(version: 2021_12_08_134211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(version: 2021_09_29_143726) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.boolean "leader"
+    t.text "description"
     t.index ["team_id"], name: "index_roles_on_team_id"
   end
 
@@ -73,6 +74,7 @@ ActiveRecord::Schema.define(version: 2021_09_29_143726) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.text "description"
     t.index ["parent_id"], name: "index_teams_on_parent_id"
   end
 
